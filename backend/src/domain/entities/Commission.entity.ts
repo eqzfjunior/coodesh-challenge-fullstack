@@ -2,37 +2,37 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { SaleEntity } from './Sale.entity';
 import { ProductEntity } from './Product.entity';
 import { SellerEntity } from './Seller.entity';
 
-@Entity()
+@Entity({
+  name: 'commission',
+})
 export class CommissionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
-    type: 'datetime',
+    type: 'timestamp',
   })
   date: Date;
 
   @Column()
   value: number;
 
-  @OneToOne(() => SellerEntity)
+  @ManyToOne(() => SellerEntity)
   @JoinColumn()
   seller: SellerEntity;
 
   @Column()
   sellerId: number;
 
-  @ManyToMany(() => ProductEntity)
+  @ManyToOne(() => ProductEntity)
   product: ProductEntity;
 
   @Column()
-  productId: string;
+  productId: number;
 }

@@ -1,12 +1,16 @@
-import { Column, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { SellerEntity } from './Seller.entity';
 import { ProductEntity } from './Product.entity';
 
+@Entity({
+  name: 'sale',
+})
 export class SaleEntity {
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
-    type: 'datetime',
+    type: 'timestamp',
   })
   date: Date;
 
@@ -23,5 +27,5 @@ export class SaleEntity {
   product: ProductEntity;
 
   @Column()
-  productId: string;
+  productId: number;
 }
