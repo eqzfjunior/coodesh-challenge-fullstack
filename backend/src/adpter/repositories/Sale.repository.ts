@@ -40,6 +40,7 @@ export class SaleRepository implements ISaleRepository {
         `,
       )
       .groupBy('seller.id')
+      .orderBy('seller.id')
       .getRawMany();
 
     return rows.map((row) => ({
