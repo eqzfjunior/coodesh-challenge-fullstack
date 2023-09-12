@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   ParseFilePipeBuilder,
   Post,
   UploadedFile,
@@ -7,8 +8,8 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ParseTransactionsPipe } from '../pipes/ParseFileTransactions.pipe';
-import { Transaction } from '../../domain/interfaces/Transaction.interface';
 import { TransactionService } from '../../domain/services/Transaction.service';
+import { TransactionFileDto } from '../dtos/TransactionFile.dto';
 
 @Controller('Transactions')
 export class TransactionsController {
@@ -28,8 +29,13 @@ export class TransactionsController {
         .build(),
       ParseTransactionsPipe,
     )
-    transactions: Transaction[],
+    transactions: TransactionFileDto[],
   ): Promise<void> {
     await this.transactinosService.import(transactions);
+  }
+
+  @Get('summary')
+  summary() {
+    return this.transactinosService.summary();
   }
 }

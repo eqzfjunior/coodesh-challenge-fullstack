@@ -1,12 +1,9 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
-import { Transaction } from '../../domain/interfaces/Transaction.interface';
+import { Injectable, PipeTransform } from '@nestjs/common';
+import { TransactionFileDto } from '../dtos/TransactionFile.dto';
 
 @Injectable()
 export class ParseTransactionsPipe implements PipeTransform {
-  transform(
-    file: Express.Multer.File,
-    metadata: ArgumentMetadata,
-  ): Transaction[] {
+  transform(file: Express.Multer.File): TransactionFileDto[] {
     const content = file.buffer.toString('utf-8');
     const lines = content
       .split('\n')
