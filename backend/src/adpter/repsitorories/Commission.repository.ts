@@ -20,4 +20,14 @@ export class CommissionRepository implements ICommissionRepository {
   save(entity: CommissionEntity): Promise<CommissionEntity> {
     return this.repository.save(entity);
   }
+
+  async getSumBySellerId(sellerId: number): Promise<number> {
+    const data = await this.repository
+      .createQueryBuilder('c')
+      .select('SUM(c.value)')
+      .where('c.seller.id = :sellerId', { sellerId })
+      .getRawOne();
+
+    return Number(data.sum);
+  }
 }

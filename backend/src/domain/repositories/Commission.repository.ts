@@ -8,4 +8,6 @@ export interface ICommissionRepository {
   ): Promise<CommissionEntity>;
 
   save(entity: CommissionEntity): Promise<CommissionEntity>;
+
+  getSumBySellerId(sellerId: number): Promise<number>;
 }
