@@ -7,10 +7,10 @@ import { CommissionEntity } from './domain/entities/Commission.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionsController } from './adpter/controllers/transation.controller';
 import { TransactionService } from './domain/services/Transaction.service';
-import { SellerRepository } from './adpter/repsitorories/Seller.repository';
-import { ProductRepository } from './adpter/repsitorories/Product.respositoy';
-import { SaleRepository } from './adpter/repsitorories/Sale.repository';
-import { CommissionRepository } from './adpter/repsitorories/Commission.repository';
+import { SellerRepository } from './adpter/repositories/Seller.repository';
+import { ProductRepository } from './adpter/repositories/Product.respositoy';
+import { SaleRepository } from './adpter/repositories/Sale.repository';
+import { CommissionRepository } from './adpter/repositories/Commission.repository';
 
 @Module({
   imports: [
