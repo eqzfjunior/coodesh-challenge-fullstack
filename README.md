@@ -6,6 +6,7 @@
 
 # Identificação das entidades
 A figura a seguir ilustra as entidades identificadas.
+
 ![Schema](images/schema.png)
 
 # Dados exibidos no frontend
