@@ -1,8 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  Transaction,
-  TransactionType,
-} from '../interfaces/Transaction.interface';
 import { ISellerRepository } from '../repositories/Seller.repository';
 import { SellerEntity } from '../entities/Seller.entity';
 import { IProductRepository } from '../repositories/Product.repository';
@@ -11,6 +7,28 @@ import { ISaleRepository } from '../repositories/Sale.repository';
 import { SaleEntity } from '../entities/Sale.entity';
 import { CommissionEntity } from '../entities/Commission.entity';
 import { ICommissionRepository } from '../repositories/Commission.repository';
+
+export interface ITransactionSummary {
+  sellerName: string;
+  totalSales: number;
+  totalCommissions: number;
+  balance: number;
+}
+
+export enum TransactionType {
+  SALE_PRODUCER = 1,
+  SALE_AFFILIATE = 2,
+  COMMISSION_PAID = 3,
+  COMMISSION_RECEIVED = 4,
+}
+
+export interface Transaction {
+  type: TransactionType;
+  date: Date;
+  productName: string;
+  value: number;
+  sellerName: string;
+}
 
 @Injectable()
 export class TransactionService {
@@ -28,7 +46,26 @@ export class TransactionService {
     private commissionRepository: ICommissionRepository,
   ) {}
 
-  summary(): void {}
+  async summary(): Promise<ITransactionSummary[]> {
+    const salesSummary = await this.saleRepository.summary();
+
+    const summaryTransaction: ITransactionSummary[] = [];
+
+    for await (const saleSummary of salesSummary) {
+      const totalCommissions = await this.commissionRepository.getSumBySellerId(
+        saleSummary.seller_id,
+      );
+
+      summaryTransaction.push({
+        sellerName: saleSummary.seller_name,
+        totalSales: saleSummary.total_sales,
+        totalCommissions,
+        balance: saleSummary.total_sales + totalCommissions,
+      });
+    }
+
+    return summaryTransaction;
+  }
 
   async import(transactions: Transaction[]): Promise<void> {
     for await (const transaction of transactions) {

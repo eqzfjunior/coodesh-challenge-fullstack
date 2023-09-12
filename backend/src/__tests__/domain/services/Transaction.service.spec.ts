@@ -1,14 +1,18 @@
 import { Test } from '@nestjs/testing';
 import {
-  Transaction,
+  TransactionService,
   TransactionType,
-} from '../../../domain/interfaces/Transaction.interface';
-import { TransactionService } from '../../../domain/services/Transaction.service';
+  Transaction,
+  ITransactionSummary,
+} from '../../../domain/services/Transaction.service';
 import { ISellerRepository } from '../../../domain/repositories/Seller.repository';
 import { SellerEntity } from '../../../domain/entities/Seller.entity';
 import { IProductRepository } from '../../../domain/repositories/Product.repository';
 import { ProductEntity } from '../../../domain/entities/Product.entity';
-import { ISaleRepository } from '../../../domain/repositories/Sale.repository';
+import {
+  ISaleRepository,
+  ISaleSummaryRaw,
+} from '../../../domain/repositories/Sale.repository';
 import { SaleEntity } from '../../../domain/entities/Sale.entity';
 import { CommissionEntity } from '../../../domain/entities/Commission.entity';
 import { ICommissionRepository } from '../../../domain/repositories/Commission.repository';
@@ -112,6 +116,7 @@ describe('TransactionService', () => {
         const sale = new SaleEntity();
         return sale;
       }),
+      summary: jest.fn(),
     };
 
     commissionRepository = {
@@ -123,6 +128,7 @@ describe('TransactionService', () => {
         const commission = new CommissionEntity();
         return commission;
       }),
+      getSumBySellerId: jest.fn(),
     };
 
     const module = await Test.createTestingModule({
@@ -148,6 +154,60 @@ describe('TransactionService', () => {
     }).compile();
 
     transactionService = module.get<TransactionService>(TransactionService);
+  });
+
+  describe('summary', () => {
+    test('Should return a summary of transactions', async () => {
+      const rows: ISaleSummaryRaw[] = [
+        {
+          seller_id: 1,
+          seller_name: 'JOSE CARLOS',
+          total_sales: 1000,
+        },
+        {
+          seller_id: 2,
+          seller_name: 'MARIA CANDIDA',
+          total_sales: 1500,
+        },
+        {
+          seller_id: 3,
+          seller_name: 'THIAGO OLIVEIRA',
+          total_sales: 5000,
+        },
+      ];
+
+      saleRepository.summary = jest.fn().mockResolvedValue(rows);
+      commissionRepository.getSumBySellerId = jest
+        .fn()
+        .mockResolvedValueOnce(50)
+        .mockResolvedValueOnce(100)
+        .mockResolvedValueOnce(-50);
+
+      const result = await transactionService.summary();
+
+      const transactionsSummary: ITransactionSummary[] = [
+        {
+          sellerName: rows[0].seller_name,
+          totalSales: rows[0].total_sales,
+          totalCommissions: 50,
+          balance: rows[0].total_sales + 50,
+        },
+        {
+          sellerName: rows[1].seller_name,
+          totalSales: rows[1].total_sales,
+          totalCommissions: 100,
+          balance: rows[1].total_sales + 100,
+        },
+        {
+          sellerName: rows[2].seller_name,
+          totalSales: rows[2].total_sales,
+          totalCommissions: -50,
+          balance: rows[2].total_sales - 50,
+        },
+      ];
+
+      expect(result).toEqual(transactionsSummary);
+    });
   });
 
   describe('import', () => {
