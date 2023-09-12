@@ -18,7 +18,7 @@ Será exibido a seguinte tabela que representa o saldo de todas as vendas somada
 | MARIA  | 15000       | -4000            |  9000   |
 
 # Organização
-O projeto backend segue o princípios da arquitetura hexagonal com a seguinte entrutra de diretórios.
+O projeto backend segue o princípios da arquitetura hexagonal com a seguinte estrutura de diretórios.
 
 - domain: O "domínio" da aplicação
   - entities
